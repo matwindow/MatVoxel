@@ -1,5 +1,5 @@
 let game_screen = { canvas: document.getElementById("webgl2") };
-let gl = screen.canvas.getContext("webgl2", {});
+let gl = game_screen.canvas.getContext("webgl2", {});
 
 function win_resize() {
   let canvas = game_screen.canvas;
