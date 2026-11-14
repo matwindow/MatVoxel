@@ -21,7 +21,8 @@ win_resize();
 const hud = {
   fps: document.getElementById("fps-text"),
   pos: document.getElementById("pos-text"),
-  realTime: document.getElementById("r-time-text")
+  realTime: document.getElementById("r-time-text"),
+  realTime: document.getElementById("webgl_-text")
 };
 
 
@@ -35,7 +36,7 @@ function renderLoop(now) {
 
   
   const renderMs = performance.now() - frameStart;
-  renderTimeText.textContent = `${renderMs.toFixed(2)} ms`;
+  gui.rendertime.textContent = `${renderMs.toFixed(2)} ms`;
 
   
   frameCount++;
