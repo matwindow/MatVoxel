@@ -1,8 +1,8 @@
-let screen = { canvas: document.getElementById("webgl2") };
+let game_screen = { canvas: document.getElementById("webgl2") };
 let gl = screen.canvas.getContext("webgl2", {});
 
 function win_resize() {
-  let canvas = screen.canvas;
+  let canvas = game_screen.canvas;
   canvas.width = canvas.clientWidth;
   canvas.height = canvas.clientHeight;
   gl.viewport(0, 0, canvas.width, canvas.height);
