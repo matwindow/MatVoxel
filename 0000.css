@@ -22,3 +22,6 @@ html, body {
   pointer-events: none; 
   text-shadow: 3px 3px 3px black;
 }
+.t-hud {
+  background-color:rgba(20,20,20,0.5)
+}
