@@ -22,6 +22,8 @@ html, body {
   pointer-events: none; 
   text-shadow: 3px 3px 3px black;
 }
-.t-hud {
-  background-color:rgba(20,20,20,0.5)
+.t-hud > div {
+  background-color: rgba(20, 20, 20, 0.5);
+  width: fit-content;
+  padding: 1px 4px;
 }
