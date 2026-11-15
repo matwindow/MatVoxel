@@ -11,11 +11,24 @@ function startGame() {
     return;
   }
 
-  const hud = {
+  const hud = {//heherhhehehehehhhjgfkgfhkjdgfhkjgfkgfhkjgfhlj
     fps: document.getElementById("fps-text"),
     renderTime: document.getElementById("webgl_-text"),
-    realTime: document.getElementById("r-time-text")
+    realTime: document.getElementById("r-time-text"),
+    cps: document.getElementById("cps-text")
   };
+
+let clicks=[[],[],[]]
+  
+window.addEventListener('mousedown', (e) => {
+  if (e.button === 0 || e.button === 1 || e.button === 2) {
+    clicks[e.button].push(performance.now());
+  }
+});
+
+
+window.addEventListener('contextmenu', (e) => e.preventDefault());
+  
   let frameCount = 0;
   let lastFpsTime = performance.now();
   function getTimeOfDay(hour) {
@@ -39,6 +52,14 @@ function startGame() {
   }
 
   function renderLoop(now) {
+     for (let i = 0; i < 3; i++) {
+      while (clicks[i].length > 0 && now - clicks[i][0] > 1000) {
+        clicks[i].shift();
+      }
+    }
+    if (hud.cps) {
+      hud.cps.textContent = `${clicks[0].length}|${clicks[1].length}|${clicks[2].length}`;
+    }
     if (true){
       r_clock.setTime(Date.now());
 const h = r_clock.getHours();
@@ -47,6 +68,10 @@ const mm = String(r_clock.getMinutes()).padStart(2, '0');
 const period = getTimeOfDay(h);
 hud.realTime.textContent=hh+":"+mm+" ("+period+") [24h]"
     }
+    
+
+const cpsText = `CPS: ${clicks[0].length}|${clicks[1].length}|${clicks[2].length}`;
+
     const frameStart = performance.now();
     resizeCanvas();
     gl.clearColor(50 / 255, 50 / 255, 200 / 255, 1);
