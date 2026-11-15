@@ -40,10 +40,10 @@ function startGame() {
 
   function renderLoop(now) {
     if (true){
-      clock.setTime(Date.now());
-const h = clock.getHours();
+      r_clock.setTime(Date.now());
+const h = r_clock.getHours();
 const hh = String(h).padStart(2, '0');
-const mm = String(clock.getMinutes()).padStart(2, '0');
+const mm = String(r_clock.getMinutes()).padStart(2, '0');
 const period = getTimeOfDay(h);
 hud.realTime.textContent=hh+":"+mm+" ("+period+") [24h]"
     }
