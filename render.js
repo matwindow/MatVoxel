@@ -132,7 +132,7 @@ window.drawMatVoxelCube = (() => {
         p.xz = mat2(c, -s, s, c) * p.xz;
         p.yz = mat2(c, -s, s, c) * p.yz;
         p.z += 3.0;
-        gl_Position = vec4(p.x / aspect, p.y, p.z * 0.1, p.z);
+       gl_Position = vec4(p.x / aspect, p.y, (p.z - 3.0) * 0.5, p.z);
         vCol = col;
       }`;
 
