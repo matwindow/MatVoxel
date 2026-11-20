@@ -96,6 +96,8 @@ const cpsText = `CPS: ${clicks[0].length}|${clicks[1].length}|${clicks[2].length
   window.addEventListener("resize", resizeCanvas);
   resizeCanvas();
   requestAnimationFrame(renderLoop);
+ //==============================
+  
 }
 
 
@@ -104,3 +106,83 @@ if (document.readyState === "loading") {
 } else {
   startGame();
 }
+//===================
+(() => {
+  const canvas = document.getElementById("webgl2");
+  const gl = canvas?.getContext("webgl2");
+  if (!gl) return;
+
+  const vs = `#version 300 es
+    in vec3 pos;
+    in vec3 col;
+    uniform float angle;
+    uniform float aspect;
+    out vec3 vCol;
+    void main() {
+      float c = cos(angle), s = sin(angle);
+      vec3 p = pos;
+      p.xz = mat2(c, -s, s, c) * p.xz;
+      p.yz = mat2(c, -s, s, c) * p.yz;
+      p.z += 3.0;
+      gl_Position = vec4(p.x / aspect, p.y, p.z * 0.1, p.z);
+      vCol = col;
+    }`;
+
+  const fs = `#version 300 es
+    precision highp float;
+    in vec3 vCol;
+    out vec4 outColor;
+    void main() { outColor = vec4(vCol, 1.0); }`;
+
+  const prog = gl.createProgram();
+  [vs, fs].forEach((src, i) => {
+    const sh = gl.createShader(i ? gl.FRAGMENT_SHADER : gl.VERTEX_SHADER);
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+    gl.attachShader(prog, sh);
+  });
+  gl.linkProgram(prog);
+
+  const verts = new Float32Array([
+    -0.5,-0.5, 0.5,  1,0,0,   0.5,-0.5, 0.5,  0,1,0,
+     0.5, 0.5, 0.5,  0,0,1,  -0.5, 0.5, 0.5,  1,1,0,
+    -0.5,-0.5,-0.5,  1,0,1,   0.5,-0.5,-0.5,  0,1,1,
+     0.5, 0.5,-0.5,  1,1,1,  -0.5, 0.5,-0.5,  0.3,0.3,0.3
+  ]);
+
+  const idx = new Uint16Array([
+    0,1,2, 0,2,3,  1,5,6, 1,6,2,  5,4,7, 5,7,6,
+    4,0,3, 4,3,7,  3,2,6, 3,6,7,  4,5,1, 4,1,0
+  ]);
+
+  const vao = gl.createVertexArray();
+  gl.bindVertexArray(vao);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER, verts, gl.STATIC_DRAW);
+
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW);
+
+  const posLoc = gl.getAttribLocation(prog, "pos");
+  gl.enableVertexAttribArray(posLoc);
+  gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 24, 0);
+
+  const colLoc = gl.getAttribLocation(prog, "col");
+  gl.enableVertexAttribArray(colLoc);
+  gl.vertexAttribPointer(colLoc, 3, gl.FLOAT, false, 24, 12);
+
+  const angleLoc = gl.getUniformLocation(prog, "angle");
+  const aspectLoc = gl.getUniformLocation(prog, "aspect");
+
+  function drawCube(now) {
+    gl.enable(gl.DEPTH_TEST);
+    gl.useProgram(prog);
+    gl.bindVertexArray(vao);
+    gl.uniform1f(angleLoc, now * 0.001);
+    gl.uniform1f(aspectLoc, canvas.width / canvas.height);
+    gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
+    requestAnimationFrame(drawCube);
+  }
+  requestAnimationFrame(drawCube);
+})();
