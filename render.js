@@ -90,6 +90,10 @@ const cpsText = `CPS: ${clicks[0].length}|${clicks[1].length}|${clicks[2].length
       frameCount = 0;
       lastFpsTime = now;
     }
+
+        if (window.drawMatVoxelCube) {
+      window.drawMatVoxelCube(now);
+    }
     requestAnimationFrame(renderLoop);
   }
 
@@ -98,6 +102,7 @@ const cpsText = `CPS: ${clicks[0].length}|${clicks[1].length}|${clicks[2].length
   requestAnimationFrame(renderLoop);
  //==============================
   
+
 }
 
 
@@ -151,8 +156,12 @@ if (document.readyState === "loading") {
   ]);
 
   const idx = new Uint16Array([
-    0,1,2, 0,2,3,  1,5,6, 1,6,2,  5,4,7, 5,7,6,
-    4,0,3, 4,3,7,  3,2,6, 3,6,7,  4,5,1, 4,1,0
+    0, 1, 2,  0, 2, 3,
+    1, 5, 6,  1, 6, 2,
+    5, 4, 7,  5, 7, 6,
+    4, 0, 3,  4, 3, 7,
+    3, 2, 6,  3, 6, 7,
+    4, 5, 1,  4, 1, 0
   ]);
 
   const vao = gl.createVertexArray();
@@ -175,14 +184,12 @@ if (document.readyState === "loading") {
   const angleLoc = gl.getUniformLocation(prog, "angle");
   const aspectLoc = gl.getUniformLocation(prog, "aspect");
 
-  function drawCube(now) {
+  window.drawMatVoxelCube = (now) => {
     gl.enable(gl.DEPTH_TEST);
     gl.useProgram(prog);
     gl.bindVertexArray(vao);
     gl.uniform1f(angleLoc, now * 0.001);
     gl.uniform1f(aspectLoc, canvas.width / canvas.height);
     gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
-    requestAnimationFrame(drawCube);
-  }
-  requestAnimationFrame(drawCube);
+  };
 })();
